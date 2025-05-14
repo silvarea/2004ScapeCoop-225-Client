@@ -200,7 +200,7 @@ export class Client extends GameShell {
     private imageBackbase1: Pix8 | null = null;
     private imageBackbase2: Pix8 | null = null;
     private imageBackhmid1: Pix8 | null = null;
-    private imageSideicons: (Pix8 | null)[] = new TypedArray1d(13, null);
+    private imageSideicons: (Pix8 | null)[] = new TypedArray1d(14, null);
     private imageMinimap: Pix24 | null = null;
     private imageCompass: Pix24 | null = null;
     private imageMapscene: (Pix8 | null)[] = new TypedArray1d(50, null);
@@ -1479,7 +1479,7 @@ export class Client extends GameShell {
             this.imageBackbase1 = Pix8.fromArchive(media, 'backbase1', 0);
             this.imageBackbase2 = Pix8.fromArchive(media, 'backbase2', 0);
             this.imageBackhmid1 = Pix8.fromArchive(media, 'backhmid1', 0);
-            for (let i: number = 0; i < 13; i++) {
+            for (let i: number = 0; i < 14; i++) {
                 this.imageSideicons[i] = Pix8.fromArchive(media, 'sideicons', i);
             }
             this.imageCompass = Pix24.fromArchive(media, 'compass', 0);
@@ -3098,6 +3098,10 @@ export class Client extends GameShell {
                     } else if (this.selectedTab === 13) {
                         this.imageRedstone1hv?.draw(233, 0);
                     }
+                }
+
+                if (this.tabInterfaceId[7] !== -1 && (this.flashingTab !== 7 || this.loopCycle % 20 < 10)) {
+                    this.imageSideicons[13]?.draw(55, 2);
                 }
 
                 if (this.tabInterfaceId[8] !== -1 && (this.flashingTab !== 8 || this.loopCycle % 20 < 10)) {
@@ -5064,6 +5068,15 @@ export class Client extends GameShell {
             this.socialMessage = 'Enter name of player to delete from list';
         }
 
+        if (clientCode === ClientCode.CC_GROUP_START) {
+            this.redrawChatback = true;
+            this.chatbackInputOpen = false;
+            this.showSocialInput = true;
+            this.socialInput = '';
+            this.socialAction = 6;
+            this.socialMessage = 'Enter the name of your Adventuring Party';
+        }
+
         // physical parts
         if (clientCode >= ClientCode.CC_CHANGE_HEAD_L && clientCode <= ClientCode.CC_CHANGE_FEET_R) {
             const part: number = ((clientCode - 300) / 2) | 0;
@@ -5370,6 +5383,11 @@ export class Client extends GameShell {
                                 username = JString.toBase37(this.socialInput);
                                 this.removeIgnore(username);
                             }
+
+                            if (this.socialAction === 6) {
+                                username = JString.toBase37(this.socialInput);
+                                this.createGroup(username);
+                            }
                         }
                     } else if (this.chatbackInputOpen) {
                         if (key >= 48 && key <= 57 && this.chatbackInput.length < 10) {
@@ -5642,6 +5660,15 @@ export class Client extends GameShell {
         }
 
         return username.toLowerCase() === this.localPlayer.name?.toLowerCase();
+    }
+
+    private createGroup(groupName: bigint): void {
+        if (groupName === 0n) {
+            return;
+        }
+
+        this.out.p1isaac(ClientProt.GROUP_CREATE);
+        this.out.p8(groupName);
     }
 
     private addFriend(username: bigint): void {

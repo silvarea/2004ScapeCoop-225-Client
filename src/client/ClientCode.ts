@@ -71,4 +71,11 @@ export const enum ClientCode {
     CC_RECOVERY2 = 653,
     CC_RECOVERY3 = 654,
     CC_LAST_LOGIN_INFO2 = 655, // has no recovery questions
+
+    //// Group (700-749)
+    CC_GROUP_START = 700,
+    CC_GROUP_END = 701,
+    CC_ADD_GROUP = 702,
+    CC_DEL_GROUP = 703,
+    CC_GROUP_SIZE = 704,
 };

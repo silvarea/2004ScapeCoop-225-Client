@@ -92,4 +92,5 @@ export const enum ClientProt {
     CLIENT_CHEAT = 4, // index: 253 - NXT naming
     MESSAGE_PUBLIC = 158, // index: 254 - NXT naming
     MOVE_GAMECLICK = 181, // index: 255 - NXT naming
+    GROUP_CREATE = 12, 
 };
